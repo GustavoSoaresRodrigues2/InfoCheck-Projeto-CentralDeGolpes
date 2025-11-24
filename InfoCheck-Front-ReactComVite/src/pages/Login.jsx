@@ -1,4 +1,4 @@
-
+// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiPost } from "../api";
@@ -12,7 +12,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
-
+  // Função para formatar CPF enquanto digita
   function formatarCPF(valor) {
     const numeros = valor.replace(/\D/g, "");
     if (numeros.length <= 11) {

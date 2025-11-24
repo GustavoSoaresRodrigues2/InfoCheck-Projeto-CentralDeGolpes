@@ -1,16 +1,30 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login.jsx";
-import Registro from "./pages/Registro.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import FeedAlertas from "./pages/FeedAlertas";
+import GolpesPorBanco from "./pages/GolpesPorBanco";
+import Estatisticas from "./pages/Estatisticas";
+import DenunciaElaborada from "./pages/DenunciaElaborada";
+import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+import Dashboard from "./pages/Dashboard";
+import "./styles/styles.css";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Registro />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-    </Routes>
+    
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/feed-alertas" element={<FeedAlertas />} />
+        <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
+        <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
+        <Route path="/estatisticas" element={<Estatisticas />} />
+        <Route path="/denuncia-elaborada" element={<DenunciaElaborada />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    
   );
 }
 

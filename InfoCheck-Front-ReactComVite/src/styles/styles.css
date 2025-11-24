@@ -1,4 +1,4 @@
-
+/* src/styles/styles.css - Estilos Globais */
 
 * {
   margin: 0;
@@ -20,7 +20,7 @@ body {
   min-height: 100vh;
 }
 
-
+/* Scrollbar customizada */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

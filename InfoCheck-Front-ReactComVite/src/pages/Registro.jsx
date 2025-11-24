@@ -1,4 +1,4 @@
-
+// src/pages/Registro.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiPost } from "../api";
@@ -51,7 +51,7 @@ function Registro() {
     }
     
     setForm((prev) => ({ ...prev, [name]: valorFormatado }));
-    setErro(""); 
+    setErro(""); // Limpa erro ao digitar
   }
 
   function validarFormulario() {
@@ -109,7 +109,7 @@ function Registro() {
     try {
       await apiPost("/api/usuarios/registro", body);
       
-    
+      // Mostrar mensagem de sucesso
       alert("✅ Conta criada com sucesso! Faça login para continuar.");
       navigate("/login");
     } catch (err) {
