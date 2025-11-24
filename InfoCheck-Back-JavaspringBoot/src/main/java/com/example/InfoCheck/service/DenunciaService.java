@@ -29,18 +29,48 @@ public class DenunciaService {
     @Autowired
     private TipoGolpeRepository tipoGolpeRepo;
 
-    // 🔹 Esse é o método que o controller está chamando: service.criar(dto)
+    /**
+     * Cria uma denúncia com suporte a valores customizados
+     * 
+     * LÓGICA:
+     * - Tipo de Golpe: Se idTipoGolpe = null, usa tipoGolpeOutro (campo de texto)
+     * - Banco: Se idBanco = null, usa nomeBanco (campo de texto)
+     */
     public Denuncia criar(DenunciaDTO dto) {
-        Usuario usuario = usuarioRepo.findById(dto.getIdUsuario()).orElse(null);
-        Banco banco = bancoRepo.findById(dto.getIdBanco()).orElse(null);
-        TipoGolpe tipo = tipoGolpeRepo.findById(dto.getIdTipoGolpe()).orElse(null);
+        // Buscar usuário (obrigatório)
+        Usuario usuario = usuarioRepo.findById(dto.getIdUsuario())
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Denuncia denuncia = new Denuncia();
         denuncia.setUsuario(usuario);
-        denuncia.setBanco(banco);
-        denuncia.setTipoGolpe(tipo); // vamos garantir esse setter na entidade
         denuncia.setContatoDenunciado(dto.getContatoDenunciado());
         denuncia.setDescricao(dto.getDescricao());
+
+        // ===== LÓGICA PARA TIPO DE GOLPE =====
+        if (dto.getIdTipoGolpe() != null) {
+            // Usuário selecionou da lista
+            TipoGolpe tipo = tipoGolpeRepo.findById(dto.getIdTipoGolpe())
+                .orElse(null);
+            denuncia.setTipoGolpe(tipo);
+            denuncia.setTipoGolpeOutro(null); // Garante que está vazio
+        } else {
+            // Usuário escolheu "Outro" e digitou
+            denuncia.setTipoGolpe(null);
+            denuncia.setTipoGolpeOutro(dto.getTipoGolpeOutro());
+        }
+
+        // ===== LÓGICA PARA BANCO =====
+        if (dto.getIdBanco() != null) {
+            // Usuário selecionou da lista
+            Banco banco = bancoRepo.findById(dto.getIdBanco())
+                .orElse(null);
+            denuncia.setBanco(banco);
+            denuncia.setNomeBancoOutro(null); // Garante que está vazio
+        } else {
+            // Usuário digitou o nome do banco
+            denuncia.setBanco(null);
+            denuncia.setNomeBancoOutro(dto.getNomeBanco());
+        }
 
         return denunciaRepo.save(denuncia);
     }
@@ -53,7 +83,6 @@ public class DenunciaService {
         return denunciaRepo.findByBancoId(idBanco);
     }
 
-    // 🔹 Esse é o método que o controller está chamando: service.listarPorCpf(cpf)
     public List<Denuncia> listarPorCpf(String cpf) {
         return denunciaRepo.findByUsuarioCpf(cpf);
     }

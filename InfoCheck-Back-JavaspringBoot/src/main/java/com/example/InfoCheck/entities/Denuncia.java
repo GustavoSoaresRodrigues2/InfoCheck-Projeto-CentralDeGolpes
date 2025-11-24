@@ -29,10 +29,17 @@ public class Denuncia {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
+    // NOVOS CAMPOS: Para valores customizados quando o usuário digita "Outro"
+    @Column(name = "tipo_golpe_outro", length = 200)
+    private String tipoGolpeOutro;
+
+    @Column(name = "nome_banco_outro", length = 200)
+    private String nomeBancoOutro;
+
     @Column(name = "data_denuncia")
     private LocalDateTime data_denuncia = LocalDateTime.now();
 
-    // getters e setters principais
+    // Getters e Setters
 
     public Integer getId_denuncia() {
         return id_denuncia;
@@ -80,6 +87,24 @@ public class Denuncia {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    // NOVOS GETTERS E SETTERS
+
+    public String getTipoGolpeOutro() {
+        return tipoGolpeOutro;
+    }
+
+    public void setTipoGolpeOutro(String tipoGolpeOutro) {
+        this.tipoGolpeOutro = tipoGolpeOutro;
+    }
+
+    public String getNomeBancoOutro() {
+        return nomeBancoOutro;
+    }
+
+    public void setNomeBancoOutro(String nomeBancoOutro) {
+        this.nomeBancoOutro = nomeBancoOutro;
     }
 
     public LocalDateTime getData_denuncia() {
