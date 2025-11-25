@@ -2,6 +2,7 @@ package com.example.InfoCheck.service;
 
 import com.example.InfoCheck.dtos.LoginDTO;
 import com.example.InfoCheck.dtos.RegistroUsuarioDTO;
+import com.example.InfoCheck.dtos.UsuarioUpdateDTO;
 import com.example.InfoCheck.entities.Usuario;
 import com.example.InfoCheck.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,20 @@ public class UsuarioService {
 
     public Usuario login(LoginDTO dto) {
         return usuarioRepo.findByCpf(dto.getCpf())
-            .filter(usuario -> usuario.getSenha().equals(dto.getSenha()))
-            .orElse(null); // retorna null se CPF não existir ou senha estiver errada
+                .filter(usuario -> usuario.getSenha().equals(dto.getSenha()))
+                .orElse(null); // retorna null se CPF não existir ou senha estiver errada
     }
+
+    public Usuario atualizarUsuario(UsuarioUpdateDTO dto) {
+        Integer id = dto.getIdUsuario().intValue();
+        Usuario usuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuario.setNome(dto.getNome());
+        usuario.setDataNascimento(dto.getDataNascimento());
+        usuario.setCep(dto.getCep());
+
+        return usuarioRepo.save(usuario);
+    }
+
 }

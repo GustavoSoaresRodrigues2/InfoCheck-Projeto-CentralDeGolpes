@@ -2,6 +2,7 @@ package com.example.InfoCheck.controller;
 
 import com.example.InfoCheck.dtos.LoginDTO;
 import com.example.InfoCheck.dtos.RegistroUsuarioDTO;
+import com.example.InfoCheck.dtos.UsuarioUpdateDTO;
 import com.example.InfoCheck.entities.Usuario;
 import com.example.InfoCheck.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class UsuarioController {
                 throw new IllegalArgumentException("dataNascimento é obrigatório");
             }
 
-            Usuario salvo = service.registrar(dto); // service cuida do mapeamento DTO -> Entity
+            Usuario salvo = service.registrar(dto);
             return ResponseEntity.ok(salvo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -44,6 +45,16 @@ public class UsuarioController {
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erro ao tentar logar");
+        }
+    }
+
+    @PostMapping("/atualizar")
+    public ResponseEntity<?> atualizarUsuario(@RequestBody UsuarioUpdateDTO dto) {
+        try {
+            Usuario atualizado = service.atualizarUsuario(dto);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

@@ -541,6 +541,24 @@ textarea.form-control {
   margin-bottom: 1rem;
 }
 
+.section-dados {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-dados > .form-group > label, .section-dados > .form-row > .form-group > label {
+  display: flex;
+}
+
+.btnSalvar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.875rem 1rem;
+  border: none;
+  border-radius: 10px;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }

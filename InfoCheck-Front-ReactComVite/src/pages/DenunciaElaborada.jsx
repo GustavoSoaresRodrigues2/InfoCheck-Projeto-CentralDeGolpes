@@ -98,10 +98,28 @@ function DenunciaElaborada() {
     );
   }
 
+  const bancos = {
+    "1": "Bradesco",
+    "2": "Itaú",
+    "3": "Santander",
+  }
+
+  const golpes = {
+    "1": "Phishing",
+    "2": "Golpe do WhatsApp",
+    "3": "Falso Boleto",
+    "4": "Clonagem de Cartão",
+  }
+
   return (
     <div className="denuncia-elaborada-container">
       <header className="denuncia-header">
         <h1 className="logo" onClick={() => navigate("/")}>
+          <svg className="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           InfoCheck
           <svg className="logo-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -139,7 +157,7 @@ function DenunciaElaborada() {
                 <h3>Informações Básicas</h3>
                 
                 <div className="form-group">
-                  <label>Contato Suspeito *</label>
+                  <label>Contato do Suspeito *</label>
                   <input
                     type="text"
                     name="contato"
@@ -313,8 +331,8 @@ function DenunciaElaborada() {
                 <div className="resumo-denuncia">
                   <h4>Resumo da Denúncia</h4>
                   <p><strong>Contato:</strong> {form.contato}</p>
-                  <p><strong>Tipo:</strong> {form.tipoGolpe === "outro" ? form.tipoGolpeOutro : "Selecionado da lista"}</p>
-                  <p><strong>Banco:</strong> {form.banco === "outro" ? form.nomeBanco : "Selecionado da lista"}</p>
+                  <p><strong>Tipo:</strong> {form.tipoGolpe === "outro" ? form.tipoGolpeOutro : golpes[form.tipoGolpe]}</p>
+                  <p><strong>Banco:</strong> {form.banco === "outro" ? form.nomeBanco : bancos[form.banco]}</p>
                   {form.valor && <p><strong>Valor:</strong> R$ {form.valor}</p>}
                   {form.dataOcorrido && <p><strong>Data:</strong> {new Date(form.dataOcorrido).toLocaleDateString()}</p>}
                 </div>

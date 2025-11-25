@@ -45,7 +45,7 @@ function Login() {
       }
 
       localStorage.setItem("usuarioLogado", JSON.stringify(resp));
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       console.error(err);
       setErro("Erro ao tentar fazer login. Verifique suas credenciais.");
@@ -61,7 +61,7 @@ function Login() {
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
       </div>
-
+      
       <div className="auth-content">
         <div className="auth-card">
           <div className="auth-header">
@@ -71,7 +71,10 @@ function Login() {
                 <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <h1 className="logo-text">InfoCheck</h1>
+              <h1 className="logo-text" onClick={() => navigate("/home")} style={{cursor: "pointer"}}>InfoCheck</h1>
+              <svg className="logo-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
             <p className="auth-subtitle">Sua segurança em primeiro lugar</p>
           </div>
