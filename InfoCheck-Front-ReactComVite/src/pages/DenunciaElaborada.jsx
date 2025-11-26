@@ -1,14 +1,21 @@
 // src/pages/DenunciaElaborada.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiPost } from "../api";
+import { apiPost, apiGet } from "../api";
 import "../styles/DenunciaElaborada.css";
 
 function DenunciaElaborada() {
   const navigate = useNavigate();
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
+  const [verificandoAuth, setVerificandoAuth] = useState(true);
   const [etapa, setEtapa] = useState(1);
   const [sucesso, setSucesso] = useState(false);
   const [numeroDenuncia, setNumeroDenuncia] = useState("");
+  
+  // Listas dinâmicas do banco de dados
+  const [bancos, setBancos] = useState([]);
+  const [tiposGolpe, setTiposGolpe] = useState([]);
+  const [carregandoDados, setCarregandoDados] = useState(true);
 
   const [form, setForm] = useState({
     contato: "",
@@ -27,17 +34,105 @@ function DenunciaElaborada() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const proximaEtapa = () => etapa < 3 && setEtapa(etapa + 1);
+  useEffect(() => {
+    const stored = localStorage.getItem("usuarioLogado");
+
+    if (!stored) {
+      navigate("/login", { replace: true });
+      setVerificandoAuth(false);
+      return;
+    }
+
+    try {
+      setUsuarioLogado(JSON.parse(stored));
+      setVerificandoAuth(false);
+      carregarDadosIniciais();
+    } catch (error) {
+      console.error("Erro ao recuperar usuário logado:", error);
+      localStorage.removeItem("usuarioLogado");
+      setVerificandoAuth(false);
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
+  // Carregar bancos e tipos de golpe do banco de dados
+  const carregarDadosIniciais = async () => {
+    setCarregandoDados(true);
+    try {
+      const [bancosData, tiposData] = await Promise.all([
+        apiGet("/api/bancos"),
+        apiGet("/api/tipos-golpe")
+      ]);
+      
+      setBancos(bancosData || []);
+      setTiposGolpe(tiposData || []);
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
+      alert("Erro ao carregar dados do formulário. Tente novamente.");
+    } finally {
+      setCarregandoDados(false);
+    }
+  };
+
+  const proximaEtapa = () => {
+    // Validações antes de avançar
+    if (etapa === 1) {
+      if (!form.contato.trim()) {
+        alert("Por favor, informe o contato do suspeito.");
+        return;
+      }
+      if (!form.tipoGolpe) {
+        alert("Por favor, selecione o tipo de golpe.");
+        return;
+      }
+      if (form.tipoGolpe === "outro" && !form.tipoGolpeOutro.trim()) {
+        alert("Por favor, especifique o tipo de golpe.");
+        return;
+      }
+      if (!form.banco) {
+        alert("Por favor, selecione o banco envolvido.");
+        return;
+      }
+      if (form.banco === "outro" && !form.nomeBanco.trim()) {
+        alert("Por favor, informe o nome do banco.");
+        return;
+      }
+    }
+    
+    if (etapa === 2) {
+      if (!form.descricao.trim()) {
+        alert("Por favor, descreva o que ocorreu.");
+        return;
+      }
+    }
+    
+    if (etapa < 3) {
+      setEtapa(etapa + 1);
+    }
+  };
+
   const voltarEtapa = () => etapa > 1 && setEtapa(etapa - 1);
 
   const enviarDenuncia = async (e) => {
     e.preventDefault();
 
-    try {
-      const usuario = JSON.parse(localStorage.getItem("usuarioLogado") || "{}");
+    if (form.valor && parseFloat(form.valor) < 0) {
+      alert("O valor não pode ser negativo.");
+      return;
+    }
 
+    if (form.dataOcorrido) {
+      const hoje = new Date();
+      const dataInformada = new Date(form.dataOcorrido);
+      if (dataInformada > hoje) {
+        alert("A data do ocorrido não pode estar no futuro.");
+        return;
+      }
+    }
+
+    try {
       const dados = {
-        idUsuario: usuario.id_usuario || 1,
+        idUsuario: usuarioLogado?.id_usuario,
         idBanco: form.banco !== "outro" ? parseInt(form.banco) : null,
         idTipoGolpe: form.tipoGolpe !== "outro" ? parseInt(form.tipoGolpe) : null,
 
@@ -46,16 +141,19 @@ function DenunciaElaborada() {
         valor: form.valor !== "" ? parseFloat(form.valor) : null,
         boletim: form.jaDenunciouPolicia === "sim",
 
-        dataGolpeOcorrido: form.dataOcorrido
-          ? form.dataOcorrido
-          : null, // DTO aceita LocalDateTime
-
+        dataGolpeOcorrido: form.dataOcorrido || null,
         comoSoube: form.comoFicouSabendo || null,
 
         tipoGolpeOutro: form.tipoGolpe === "outro" ? form.tipoGolpeOutro : null,
         nomeBancoOutro: form.banco === "outro" ? form.nomeBanco : null
       };
       
+            if (!dados.idUsuario) {
+        alert('Sessao expirada. Faca login novamente.');
+        navigate('/login');
+        return;
+      }
+
       await apiPost("/api/denuncias", dados);
 
       const numero = `000${Date.now()}`.slice(-13);
@@ -66,6 +164,15 @@ function DenunciaElaborada() {
       alert("Erro ao enviar denúncia. Tente novamente.");
     }
   };
+
+  if (verificandoAuth || carregandoDados) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Carregando...</p>
+      </div>
+    );
+  }
 
   if (sucesso) {
     return (
@@ -101,19 +208,6 @@ function DenunciaElaborada() {
       </div>
     );
   }
-
-  const bancos = {
-    "1": "Bradesco",
-    "2": "Itaú",
-    "3": "Santander",
-  };
-
-  const golpes = {
-    "1": "Phishing",
-    "2": "Golpe do WhatsApp",
-    "3": "Falso Boleto",
-    "4": "Clonagem de Cartão",
-  };
 
   return (
     <div className="denuncia-elaborada-container">
@@ -175,10 +269,11 @@ function DenunciaElaborada() {
                     <label>Tipo de Golpe *</label>
                     <select name="tipoGolpe" value={form.tipoGolpe} onChange={handleChange} required>
                       <option value="">Selecione...</option>
-                      <option value="1">Phishing</option>
-                      <option value="2">Golpe do WhatsApp</option>
-                      <option value="3">Falso Boleto</option>
-                      <option value="4">Clonagem de Cartão</option>
+                      {tiposGolpe.map((tipo) => (
+                        <option key={tipo.id_tipo} value={tipo.id_tipo}>
+                          {tipo.nome_tipo}
+                        </option>
+                      ))}
                       <option value="outro">Outro (especificar)</option>
                     </select>
 
@@ -199,9 +294,11 @@ function DenunciaElaborada() {
                     <label>Banco Envolvido *</label>
                     <select name="banco" value={form.banco} onChange={handleChange} required>
                       <option value="">Selecione...</option>
-                      <option value="1">Bradesco</option>
-                      <option value="2">Itaú</option>
-                      <option value="3">Santander</option>
+                      {bancos.map((banco) => (
+                        <option key={banco.id_banco} value={banco.id_banco}>
+                          {banco.nome_banco}
+                        </option>
+                      ))}
                       <option value="outro">Outro banco</option>
                     </select>
 
@@ -240,6 +337,7 @@ function DenunciaElaborada() {
                       onChange={handleChange}
                       placeholder="0.00"
                       step="0.01"
+                      min="0"
                     />
                   </div>
 
@@ -250,6 +348,7 @@ function DenunciaElaborada() {
                       name="dataOcorrido"
                       value={form.dataOcorrido}
                       onChange={handleChange}
+                      max={new Date().toISOString().split('T')[0]}
                     />
                   </div>
                 </div>
@@ -319,10 +418,18 @@ function DenunciaElaborada() {
                 <div className="resumo-denuncia">
                   <h4>Resumo</h4>
                   <p><strong>Contato:</strong> {form.contato}</p>
-                  <p><strong>Tipo:</strong> {form.tipoGolpe === "outro" ? form.tipoGolpeOutro : golpes[form.tipoGolpe]}</p>
-                  <p><strong>Banco:</strong> {form.banco === "outro" ? form.nomeBanco : bancos[form.banco]}</p>
+                  <p><strong>Tipo:</strong> {
+                    form.tipoGolpe === "outro" 
+                      ? form.tipoGolpeOutro 
+                      : tiposGolpe.find(t => t.id_tipo === parseInt(form.tipoGolpe))?.nome_tipo
+                  }</p>
+                  <p><strong>Banco:</strong> {
+                    form.banco === "outro" 
+                      ? form.nomeBanco 
+                      : bancos.find(b => b.id_banco === parseInt(form.banco))?.nome_banco
+                  }</p>
                   {form.valor && <p><strong>Valor:</strong> R$ {form.valor}</p>}
-                  {form.dataOcorrido && <p><strong>Data:</strong> {new Date(form.dataOcorrido).toLocaleDateString()}</p>}
+                  {form.dataOcorrido && <p><strong>Data:</strong> {new Date(form.dataOcorrido + 'T00:00').toLocaleDateString('pt-BR')}</p>}
                 </div>
 
                 <div className="botoes-navegacao">

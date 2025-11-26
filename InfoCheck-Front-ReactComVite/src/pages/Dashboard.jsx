@@ -170,7 +170,7 @@ function Dashboard() {
               <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span onClick={() => navigate("/home")} style={{ cursor: "pointer" }}>InfoCheck</span>
+            <span onClick={() => navigate("/")} style={{ cursor: "pointer" }}>InfoCheck</span>
             <svg className="logo-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

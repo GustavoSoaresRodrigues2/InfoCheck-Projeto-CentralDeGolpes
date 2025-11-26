@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import FeedAlertas from "./pages/FeedAlertas";
 import GolpesPorBanco from "./pages/GolpesPorBanco";
@@ -7,6 +7,7 @@ import DenunciaElaborada from "./pages/DenunciaElaborada";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
 import "./styles/styles.css";
 
 function App() {
@@ -18,10 +19,24 @@ function App() {
         <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
         <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
         <Route path="/estatisticas" element={<Estatisticas />} />
-        <Route path="/denuncia-elaborada" element={<DenunciaElaborada />} />
+        <Route
+          path="/denuncia-elaborada"
+          element={
+            <PrivateRoute>
+              <DenunciaElaborada />
+            </PrivateRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     
