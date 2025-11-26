@@ -20,7 +20,7 @@ public class Banco {
     @Column(nullable = false, length = 100)
     private String nome_banco;
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String cnpj;
 
     @Column(length = 200)
@@ -29,6 +29,5 @@ public class Banco {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
-    @Column(nullable = false)
     private LocalDateTime data_cadastro = LocalDateTime.now();
 }

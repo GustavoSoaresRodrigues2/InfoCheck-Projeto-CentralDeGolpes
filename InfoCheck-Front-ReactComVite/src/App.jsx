@@ -7,6 +7,7 @@ import DenunciaElaborada from "./pages/DenunciaElaborada";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Dashboard from "./pages/Dashboard";
+import CadastroEmpresa from "./pages/CadastroEmpresa";
 import PrivateRoute from "./components/PrivateRoute";
 import "./styles/styles.css";
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
         <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
         <Route path="/estatisticas" element={<Estatisticas />} />
+        <Route path="/cadastroempresa" element={<CadastroEmpresa />} />
         <Route
           path="/denuncia-elaborada"
           element={
