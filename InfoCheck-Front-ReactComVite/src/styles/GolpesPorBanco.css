@@ -93,7 +93,7 @@
   gap: 2rem;
 }
 
-.bancos-sidebar {
+.bancos-sidebar, .cadastroBanco-sidebar {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
@@ -101,6 +101,19 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   position: sticky;
   top: 2rem;
+}
+
+.cadastroBanco-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: justify;
+  gap: 20px;
+}
+
+.empresa {
+  border: 1px solid;
 }
 
 .bancos-sidebar h3 {

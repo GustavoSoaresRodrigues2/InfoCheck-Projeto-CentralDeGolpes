@@ -13,12 +13,15 @@ function GolpesPorBanco() {
   const [contatosOficiais, setContatosOficiais] = useState([]);
   const [golpes, setGolpes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usuario, setUsuario] = useState(null);
   const [usuarioLogado, setUsuarioLogado] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("usuarioLogado");
     if (stored) {
       setUsuarioLogado(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+      setUsuario(parsed);
     }
   }, []);
 
@@ -114,9 +117,28 @@ function GolpesPorBanco() {
             </svg>
           </h1>
 
-          <button className="btn-entrar" onClick={() => navigate(usuarioLogado ? "/dashboard" : "/login")}>
-            {usuarioLogado ? "Dashboard" : "Entrar"}
-          </button>
+          <div className="header-actions">
+            {!usuarioLogado && (
+              <button className="btn-entrar" onClick={() => navigate("/login")}>
+                Entrar
+              </button>
+            )}
+            {usuarioLogado && (
+              <>
+                <button className="btn-user" onClick={() => navigate("/dashboard")}>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                      stroke="currentColor" strokeWidth="2" />
+                    <circle cx="12" cy="7" r="4"
+                      stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                </button>
+                <span style={{color: "white"}}>
+                  {usuario.nome}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -294,6 +316,16 @@ function GolpesPorBanco() {
             </div>
           )}
         </main>
+
+        <aside className="cadastroBanco-sidebar">
+          <h3>Cadastre a sua empresa!</h3>
+          <p>
+            Cadastre sua empresa no nosso sistema para mostrar ao público que você é confiável. Aqui, verificamos informações e recebemos denúncias de possíveis golpes, reforçando sua credibilidade e protegendo sua reputação.
+          </p>
+          <button className="btn-entrar empresa" onClick={() => navigate("/cadastroempresa")}>
+            Cadastrar
+          </button>
+        </aside>
       </div>
     </div>
   );
