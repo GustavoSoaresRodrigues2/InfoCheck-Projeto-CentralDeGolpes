@@ -93,9 +93,16 @@ function Home() {
           <p className="hero-subtitle">
             Se você foi vítima de um golpe, faça sua denúncia.
           </p>
-          <button className="btn-denuncia" onClick={() => navigate("/denuncia-elaborada")}>
-            Denuncie agora
-          </button>
+          {usuarioLogado && (
+            <button className="btn-denuncia" onClick={() => navigate("/denuncia-elaborada")}>
+              Denuncie agora
+            </button>
+          )}
+          {!usuarioLogado && (
+            <button className="btn-denuncia" onClick={() => navigate("/login")}>
+              Denuncie agora
+            </button>
+          )}
         </div>
       </section>
 

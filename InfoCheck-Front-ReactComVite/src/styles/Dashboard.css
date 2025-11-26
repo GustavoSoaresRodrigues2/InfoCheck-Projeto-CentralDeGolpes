@@ -1,4 +1,7 @@
 /* src/styles/Dashboard.css - Dashboard Moderno */
+* {
+  list-style: none;
+}
 
 .dashboard-container {
   min-height: 100vh;
@@ -557,6 +560,19 @@ textarea.form-control {
   padding: 0.875rem 1rem;
   border: none;
   border-radius: 10px;
+}
+
+.section-denuncias {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.lista-denuncias {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 @keyframes spin {

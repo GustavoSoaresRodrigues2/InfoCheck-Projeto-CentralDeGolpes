@@ -1,74 +1,27 @@
 package com.example.InfoCheck.dtos;
 
+import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class DenunciaDTO {
 
-    private Integer idUsuario;        // id do usuário que está denunciando
-    private Integer idBanco;          // id do banco envolvido (pode ser null se digitar)
-    private Integer idTipoGolpe;      // id do tipo de golpe (pode ser null se for "Outro")
+    private Integer idUsuario;        // FK usuário
+    private Integer idBanco;          // FK banco (pode ser null)
+    private Integer idTipoGolpe;      // FK tipo (pode ser null)
+
     private String contatoDenunciado; // telefone/email/site denunciado
-    private String descricao;         // descrição do golpe
+    private String descricao;         // descrição da denúncia
 
-    // NOVOS CAMPOS para valores customizados
-    private String tipoGolpeOutro;    // texto quando usuário escolhe "Outro" tipo
-    private String nomeBanco;         // texto quando usuário digita nome do banco
+    private Double valor;             // valor perdido
+    private Boolean boletim;          // se registrou B.O
+    private LocalDate dataGolpeOcorrido; // data do golpe
+    private String comoSoube;         // como descobriu golpe
 
-    // Getters e Setters originais
+    // Campos "Outro"
+    private String tipoGolpeOutro;    // texto quando tipo = Outro
+    private String nomeBancoOutro;    // texto quando banco = Outro
 
-    public Integer getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public Integer getIdBanco() {
-        return idBanco;
-    }
-
-    public void setIdBanco(Integer idBanco) {
-        this.idBanco = idBanco;
-    }
-
-    public Integer getIdTipoGolpe() {
-        return idTipoGolpe;
-    }
-
-    public void setIdTipoGolpe(Integer idTipoGolpe) {
-        this.idTipoGolpe = idTipoGolpe;
-    }
-
-    public String getContatoDenunciado() {
-        return contatoDenunciado;
-    }
-
-    public void setContatoDenunciado(String contatoDenunciado) {
-        this.contatoDenunciado = contatoDenunciado;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    // NOVOS Getters e Setters
-
-    public String getTipoGolpeOutro() {
-        return tipoGolpeOutro;
-    }
-
-    public void setTipoGolpeOutro(String tipoGolpeOutro) {
-        this.tipoGolpeOutro = tipoGolpeOutro;
-    }
-
-    public String getNomeBanco() {
-        return nomeBanco;
-    }
-
-    public void setNomeBanco(String nomeBanco) {
-        this.nomeBanco = nomeBanco;
-    }
 }

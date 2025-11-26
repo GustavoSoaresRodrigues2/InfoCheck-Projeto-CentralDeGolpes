@@ -9,7 +9,7 @@ function DenunciaElaborada() {
   const [etapa, setEtapa] = useState(1);
   const [sucesso, setSucesso] = useState(false);
   const [numeroDenuncia, setNumeroDenuncia] = useState("");
-  
+
   const [form, setForm] = useState({
     contato: "",
     tipoGolpe: "",
@@ -21,39 +21,43 @@ function DenunciaElaborada() {
     descricao: "",
     comoFicouSabendo: "",
     jaDenunciouPolicia: "nao",
-    boletimOcorrencia: ""
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const proximaEtapa = () => {
-    if (etapa < 3) setEtapa(etapa + 1);
-  };
-
-  const voltarEtapa = () => {
-    if (etapa > 1) setEtapa(etapa - 1);
-  };
+  const proximaEtapa = () => etapa < 3 && setEtapa(etapa + 1);
+  const voltarEtapa = () => etapa > 1 && setEtapa(etapa - 1);
 
   const enviarDenuncia = async (e) => {
     e.preventDefault();
-    
+
     try {
       const usuario = JSON.parse(localStorage.getItem("usuarioLogado") || "{}");
-      
+
       const dados = {
         idUsuario: usuario.id_usuario || 1,
-        contatoDenunciado: form.contato,
-        idTipoGolpe: form.tipoGolpe !== "outro" ? parseInt(form.tipoGolpe) : null,
-        tipoGolpeOutro: form.tipoGolpe === "outro" ? form.tipoGolpeOutro : null,
         idBanco: form.banco !== "outro" ? parseInt(form.banco) : null,
-        nomeBanco: form.banco === "outro" ? form.nomeBanco : null,
-        descricao: `${form.descricao}\n\nValor: R$ ${form.valor}\nData: ${form.dataOcorrido}\nComo soube: ${form.comoFicouSabendo}\nBO: ${form.jaDenunciouPolicia === "sim" ? form.boletimOcorrencia : "Não registrado"}`
-      };
+        idTipoGolpe: form.tipoGolpe !== "outro" ? parseInt(form.tipoGolpe) : null,
 
-      await apiPost("/api/denuncias", dados);
+        contatoDenunciado: form.contato,
+        descricao: form.descricao,
+        valor: form.valor !== "" ? parseFloat(form.valor) : null,
+        boletim: form.jaDenunciouPolicia === "sim",
+
+        dataGolpeOcorrido: form.dataOcorrido
+          ? form.dataOcorrido
+          : null, // DTO aceita LocalDateTime
+
+        comoSoube: form.comoFicouSabendo || null,
+
+        tipoGolpeOutro: form.tipoGolpe === "outro" ? form.tipoGolpeOutro : null,
+        nomeBancoOutro: form.banco === "outro" ? form.nomeBanco : null
+      };
       
+      await apiPost("/api/denuncias", dados);
+
       const numero = `000${Date.now()}`.slice(-13);
       setNumeroDenuncia(numero);
       setSucesso(true);
@@ -69,20 +73,20 @@ function DenunciaElaborada() {
         <div className="sucesso-card">
           <h2>Denúncia Registrada</h2>
           <p className="numero">N°: {numeroDenuncia}</p>
-          
+
           <div className="check-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" fill="none"/>
-              <path d="M8 12L11 15L16 9" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" fill="none" />
+              <path d="M8 12L11 15L16 9" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
 
           <p className="msg-principal">Sua denúncia foi registrada com sucesso.</p>
           <p className="msg-secundaria">
-            Nossa equipe analisará as informações e, se necessário, entrará em contato para complementar os dados.
+            Nossa equipe analisará as informações e poderá entrar em contato.
           </p>
           <p className="msg-final">
-            Sua ação ajuda a prevenir que outras pessoas também sejam vítimas. Obrigado por confiar no InfoCheck.
+            Sua ação ajuda a proteger outras pessoas. Obrigado por confiar no InfoCheck.
           </p>
 
           <div className="botoes-finais">
@@ -102,27 +106,27 @@ function DenunciaElaborada() {
     "1": "Bradesco",
     "2": "Itaú",
     "3": "Santander",
-  }
+  };
 
   const golpes = {
     "1": "Phishing",
     "2": "Golpe do WhatsApp",
     "3": "Falso Boleto",
     "4": "Clonagem de Cartão",
-  }
+  };
 
   return (
     <div className="denuncia-elaborada-container">
       <header className="denuncia-header">
         <h1 className="logo" onClick={() => navigate("/")}>
-          <svg className="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg className="logo-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" />
+            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" />
+            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" />
           </svg>
           InfoCheck
-          <svg className="logo-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg className="logo-check" viewBox="0 0 24 24" fill="none">
+            <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" />
           </svg>
         </h1>
       </header>
@@ -132,30 +136,28 @@ function DenunciaElaborada() {
           <h2>Registrar Denúncia Detalhada</h2>
           <p className="subtitulo">Ajude a comunidade com informações completas</p>
 
-          {/* Indicador de etapas */}
+          {/* Indicador */}
           <div className="etapas-indicador">
-            <div className={`etapa ${etapa >= 1 ? 'active' : ''}`}>
-              <span>1</span>
-              <p>Básico</p>
+            <div className={`etapa ${etapa >= 1 ? "active" : ""}`}>
+              <span>1</span><p>Básico</p>
             </div>
-            <div className={`linha ${etapa >= 2 ? 'active' : ''}`}></div>
-            <div className={`etapa ${etapa >= 2 ? 'active' : ''}`}>
-              <span>2</span>
-              <p>Detalhes</p>
+            <div className={`linha ${etapa >= 2 ? "active" : ""}`} />
+            <div className={`etapa ${etapa >= 2 ? "active" : ""}`}>
+              <span>2</span><p>Detalhes</p>
             </div>
-            <div className={`linha ${etapa >= 3 ? 'active' : ''}`}></div>
-            <div className={`etapa ${etapa >= 3 ? 'active' : ''}`}>
-              <span>3</span>
-              <p>Confirmação</p>
+            <div className={`linha ${etapa >= 3 ? "active" : ""}`} />
+            <div className={`etapa ${etapa >= 3 ? "active" : ""}`}>
+              <span>3</span><p>Confirmação</p>
             </div>
           </div>
 
           <form onSubmit={enviarDenuncia}>
-            {/* ETAPA 1 */}
+
+            {/* --- ETAPA 1 --- */}
             {etapa === 1 && (
               <div className="etapa-content">
                 <h3>Informações Básicas</h3>
-                
+
                 <div className="form-group">
                   <label>Contato do Suspeito *</label>
                   <input
@@ -163,7 +165,7 @@ function DenunciaElaborada() {
                     name="contato"
                     value={form.contato}
                     onChange={handleChange}
-                    placeholder="Telefone, e-mail, PIX, link..."
+                    placeholder="Telefone, e-mail, PIX..."
                     required
                   />
                 </div>
@@ -177,17 +179,18 @@ function DenunciaElaborada() {
                       <option value="2">Golpe do WhatsApp</option>
                       <option value="3">Falso Boleto</option>
                       <option value="4">Clonagem de Cartão</option>
-                      <option value="outro">🖊️ Outro (especificar)</option>
+                      <option value="outro">Outro (especificar)</option>
                     </select>
+
                     {form.tipoGolpe === "outro" && (
                       <input
                         type="text"
                         name="tipoGolpeOutro"
                         value={form.tipoGolpeOutro}
                         onChange={handleChange}
-                        placeholder="Especifique o tipo de golpe..."
-                        className="mt-2"
                         required
+                        className="mt-2"
+                        placeholder="Digite o tipo de golpe..."
                       />
                     )}
                   </div>
@@ -199,17 +202,18 @@ function DenunciaElaborada() {
                       <option value="1">Bradesco</option>
                       <option value="2">Itaú</option>
                       <option value="3">Santander</option>
-                      <option value="outro">🖊️ Outro banco</option>
+                      <option value="outro">Outro banco</option>
                     </select>
+
                     {form.banco === "outro" && (
                       <input
                         type="text"
                         name="nomeBanco"
                         value={form.nomeBanco}
                         onChange={handleChange}
-                        placeholder="Digite o nome do banco..."
-                        className="mt-2"
                         required
+                        className="mt-2"
+                        placeholder="Nome do banco..."
                       />
                     )}
                   </div>
@@ -221,7 +225,7 @@ function DenunciaElaborada() {
               </div>
             )}
 
-            {/* ETAPA 2 */}
+            {/* --- ETAPA 2 --- */}
             {etapa === 2 && (
               <div className="etapa-content">
                 <h3>Detalhes do Golpe</h3>
@@ -256,9 +260,9 @@ function DenunciaElaborada() {
                     name="descricao"
                     value={form.descricao}
                     onChange={handleChange}
-                    rows="5"
-                    placeholder="Descreva como o golpe aconteceu, quais mensagens recebeu, etc..."
                     required
+                    rows="5"
+                    placeholder="Explique detalhadamente o que ocorreu..."
                   />
                 </div>
 
@@ -269,22 +273,18 @@ function DenunciaElaborada() {
                     name="comoFicouSabendo"
                     value={form.comoFicouSabendo}
                     onChange={handleChange}
-                    placeholder="Ex: Liguei para o banco e confirmaram..."
+                    placeholder="Ex: Liguei no banco e confirmaram."
                   />
                 </div>
 
                 <div className="botoes-navegacao">
-                  <button type="button" className="btn-voltar" onClick={voltarEtapa}>
-                    ← Voltar
-                  </button>
-                  <button type="button" className="btn-proximo" onClick={proximaEtapa}>
-                    Próximo →
-                  </button>
+                  <button type="button" className="btn-voltar" onClick={voltarEtapa}>← Voltar</button>
+                  <button type="button" className="btn-proximo" onClick={proximaEtapa}>Próximo →</button>
                 </div>
               </div>
             )}
 
-            {/* ETAPA 3 */}
+            {/* --- ETAPA 3 --- */}
             {etapa === 3 && (
               <div className="etapa-content">
                 <h3>Confirmação</h3>
@@ -302,6 +302,7 @@ function DenunciaElaborada() {
                       />
                       <span>Sim</span>
                     </label>
+
                     <label className="radio-label">
                       <input
                         type="radio"
@@ -315,21 +316,8 @@ function DenunciaElaborada() {
                   </div>
                 </div>
 
-                {form.jaDenunciouPolicia === "sim" && (
-                  <div className="form-group">
-                    <label>Número do Boletim de Ocorrência</label>
-                    <input
-                      type="text"
-                      name="boletimOcorrencia"
-                      value={form.boletimOcorrencia}
-                      onChange={handleChange}
-                      placeholder="Ex: 123456/2024"
-                    />
-                  </div>
-                )}
-
                 <div className="resumo-denuncia">
-                  <h4>Resumo da Denúncia</h4>
+                  <h4>Resumo</h4>
                   <p><strong>Contato:</strong> {form.contato}</p>
                   <p><strong>Tipo:</strong> {form.tipoGolpe === "outro" ? form.tipoGolpeOutro : golpes[form.tipoGolpe]}</p>
                   <p><strong>Banco:</strong> {form.banco === "outro" ? form.nomeBanco : bancos[form.banco]}</p>
@@ -338,15 +326,12 @@ function DenunciaElaborada() {
                 </div>
 
                 <div className="botoes-navegacao">
-                  <button type="button" className="btn-voltar" onClick={voltarEtapa}>
-                    ← Voltar
-                  </button>
-                  <button type="submit" className="btn-enviar">
-                    ✓ Enviar Denúncia
-                  </button>
+                  <button type="button" className="btn-voltar" onClick={voltarEtapa}>← Voltar</button>
+                  <button type="submit" className="btn-enviar">✓ Enviar Denúncia</button>
                 </div>
               </div>
             )}
+
           </form>
         </div>
       </main>

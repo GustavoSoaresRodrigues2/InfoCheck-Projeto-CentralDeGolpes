@@ -9,72 +9,85 @@ import com.example.InfoCheck.repository.BancoRepository;
 import com.example.InfoCheck.repository.DenunciaRepository;
 import com.example.InfoCheck.repository.TipoGolpeRepository;
 import com.example.InfoCheck.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class DenunciaService {
 
-    @Autowired
-    private DenunciaRepository denunciaRepo;
+    private final DenunciaRepository denunciaRepo;
+    private final UsuarioRepository usuarioRepo;
+    private final BancoRepository bancoRepo;
+    private final TipoGolpeRepository tipoGolpeRepo;
 
-    @Autowired
-    private UsuarioRepository usuarioRepo;
+    public DenunciaService(
+            DenunciaRepository denunciaRepo,
+            UsuarioRepository usuarioRepo,
+            BancoRepository bancoRepo,
+            TipoGolpeRepository tipoGolpeRepo) {
+        this.denunciaRepo = denunciaRepo;
+        this.usuarioRepo = usuarioRepo;
+        this.bancoRepo = bancoRepo;
+        this.tipoGolpeRepo = tipoGolpeRepo;
+    }
 
-    @Autowired
-    private BancoRepository bancoRepo;
-
-    @Autowired
-    private TipoGolpeRepository tipoGolpeRepo;
-
-    /**
-     * Cria uma denúncia com suporte a valores customizados
-     * 
-     * LÓGICA:
-     * - Tipo de Golpe: Se idTipoGolpe = null, usa tipoGolpeOutro (campo de texto)
-     * - Banco: Se idBanco = null, usa nomeBanco (campo de texto)
-     */
+    // ==========================================
+    // 🔹 CRIAR DENÚNCIA
+    // ==========================================
     public Denuncia criar(DenunciaDTO dto) {
+
         // Buscar usuário (obrigatório)
         Usuario usuario = usuarioRepo.findById(dto.getIdUsuario())
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Denuncia denuncia = new Denuncia();
+
         denuncia.setUsuario(usuario);
         denuncia.setContatoDenunciado(dto.getContatoDenunciado());
         denuncia.setDescricao(dto.getDescricao());
+        denuncia.setValor(dto.getValor());
+        denuncia.setBoletim(dto.getBoletim());
+        denuncia.setComoSoube(dto.getComoSoube());
+        denuncia.setDataGolpeOcorrido(dto.getDataGolpeOcorrido());
 
-        // ===== LÓGICA PARA TIPO DE GOLPE =====
+        // ============================
+        // TIPO DE GOLPE
+        // ============================
         if (dto.getIdTipoGolpe() != null) {
-            // Usuário selecionou da lista
             TipoGolpe tipo = tipoGolpeRepo.findById(dto.getIdTipoGolpe())
-                .orElse(null);
+                    .orElse(null);
+
             denuncia.setTipoGolpe(tipo);
-            denuncia.setTipoGolpeOutro(null); // Garante que está vazio
+            denuncia.setTipoGolpeOutro(null);
         } else {
-            // Usuário escolheu "Outro" e digitou
             denuncia.setTipoGolpe(null);
             denuncia.setTipoGolpeOutro(dto.getTipoGolpeOutro());
         }
 
-        // ===== LÓGICA PARA BANCO =====
+        // ============================
+        // BANCO
+        // ============================
         if (dto.getIdBanco() != null) {
-            // Usuário selecionou da lista
             Banco banco = bancoRepo.findById(dto.getIdBanco())
-                .orElse(null);
+                    .orElse(null);
+
             denuncia.setBanco(banco);
-            denuncia.setNomeBancoOutro(null); // Garante que está vazio
+            denuncia.setNomeBancoOutro(null);
         } else {
-            // Usuário digitou o nome do banco
             denuncia.setBanco(null);
-            denuncia.setNomeBancoOutro(dto.getNomeBanco());
+            denuncia.setNomeBancoOutro(dto.getNomeBancoOutro());
         }
 
         return denunciaRepo.save(denuncia);
     }
 
+    // ==========================================
+    // 🔹 LISTAR
+    // ==========================================
     public List<Denuncia> listarTodas() {
         return denunciaRepo.findAll();
     }
@@ -86,4 +99,36 @@ public class DenunciaService {
     public List<Denuncia> listarPorCpf(String cpf) {
         return denunciaRepo.findByUsuarioCpf(cpf);
     }
+
+    public List<Denuncia> listarPorIdUsuario(Integer idUsuario) {
+        return denunciaRepo.findByUsuarioId(idUsuario);
+    }
+
+    public List<Denuncia> listarPorTipo(Integer idTipo) {
+        return denunciaRepo.findByTipoId(idTipo);
+    }
+
+    // ==========================================
+    // 🔹 BUSCA POR DATA
+    // ==========================================
+    public List<Denuncia> listarPorMesAno(int ano, int mes) {
+        return denunciaRepo.findByAnoMes(ano, mes);
+    }
+
+    public List<Denuncia> listarEntreDatas(LocalDate inicio, LocalDate fim) {
+
+        LocalDateTime inicioDT = inicio.atStartOfDay();
+        LocalDateTime fimDT = fim.atTime(23, 59, 59);
+
+        return denunciaRepo.findBetweenDates(inicioDT, fimDT);
+    }
+
+    public List<Denuncia> buscarPorUsuario(Integer idUsuario) {
+        return denunciaRepo.findByUsuarioId(idUsuario);
+    }
+
+    public List<Denuncia> listarDenunciasPorUsuario(Integer idUsuario) {
+        return denunciaRepo.findByUsuarioOrderByDataDenunciaDesc(idUsuario);
+    }
+
 }

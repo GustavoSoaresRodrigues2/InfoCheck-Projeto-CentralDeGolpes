@@ -11,6 +11,7 @@ function Dashboard() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [denuncias, setDenuncias] = useState([]);
 
   function formatarCEP(valor) {
     // Remove tudo que não for número
@@ -53,6 +54,7 @@ function Dashboard() {
 
   useEffect(() => {
     const stored = localStorage.getItem("usuarioLogado");
+
     if (!stored) {
       navigate("/login");
       return;
@@ -62,7 +64,6 @@ function Dashboard() {
       const parsed = JSON.parse(stored);
       setUsuario(parsed);
 
-      // Preenche o formulário com os dados do usuário
       setFormUsuario({
         nome: parsed.nome || "",
         dataNascimento: parsed.dataNascimento || "",
@@ -70,12 +71,30 @@ function Dashboard() {
         senha: "",
         confirmarSenha: ""
       });
+
+      async function carregarDenuncias() {
+        try {
+          setLoading(true);
+          const resposta = await apiGet(`/api/denuncias/usuarios/${parsed.id_usuario}/denuncias`);
+          setDenuncias(resposta);
+        } catch (e) {
+          console.error("Erro ao carregar denúncias:", e);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+
+      carregarDenuncias();
+
     } catch (e) {
       console.error("Erro ao ler usuário:", e);
       localStorage.removeItem("usuarioLogado");
       navigate("/login");
     }
+
   }, [navigate]);
+
 
   function handleLogout() {
     localStorage.removeItem("usuarioLogado");
@@ -87,11 +106,13 @@ function Dashboard() {
     // Validação de senha
     if (formUsuario.senha !== formUsuario.confirmarSenha) {
       alert("As senhas não coincidem!");
+      setLoading(false);
       return;
     }
 
     if (formUsuario.senha.length > 0 && formUsuario.senha.length < 6) {
       alert("A senha deve ter pelo menos 6 caracteres!");
+      setLoading(false);
       return;
     }
 
@@ -125,6 +146,19 @@ function Dashboard() {
 
   if (!usuario) return null;
 
+  const bancos = {
+    "1": "Bradesco",
+    "2": "Itaú",
+    "3": "Santander",
+  };
+
+  const golpes = {
+    "1": "Phishing",
+    "2": "Golpe do WhatsApp",
+    "3": "Falso Boleto",
+    "4": "Clonagem de Cartão",
+  };
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -136,7 +170,7 @@ function Dashboard() {
               <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span onClick={() => navigate("/home")} style={{cursor: "pointer"}}>InfoCheck</span>
+            <span onClick={() => navigate("/home")} style={{ cursor: "pointer" }}>InfoCheck</span>
             <svg className="logo-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -351,8 +385,62 @@ function Dashboard() {
                 {loading ? "Salvando..." : "Salvar alterações"}
               </button>
             </div>
-
           )}
+          {abaAtiva === "historicoDenuncia" && (
+            <div className="section-denuncias">
+              <h2>Suas denúncias</h2>
+              {abaAtiva === "historicoDenuncia" && (
+                <div className="section-denuncias">
+                  {loading ? (
+                    <p>Carregando denúncias...</p>
+                  ) : denuncias.length === 0 ? (
+                    <p>Nenhuma denúncia registrada.</p>
+                  ) : (
+                    <ul className="lista-denuncias">
+                      {denuncias.map((d) => (
+                        <li key={d.id_denuncia} className="denuncia-card">
+
+                          <h3>Denúncia #{d.id_denuncia}</h3>
+
+                          <p><strong>Contato denunciado:</strong> {d.contatoDenunciado}</p>
+
+                          <p><strong>Descrição:</strong> {d.descricao || "Não informado"}</p>
+
+                          <p><strong>Valor perdido:</strong>
+                            {d.valor ? `R$ ${d.valor.toFixed(2)}` : "Não informado"}
+                          </p>
+
+                          <p><strong>Registrou BO?:</strong>
+                            {d.boletim ? "Sim" : "Não"}
+                          </p>
+
+                          <p><strong>Data do golpe:</strong>
+                            {d.dataGolpeOcorrido
+                              ? new Date(d.dataGolpeOcorrido).toLocaleDateString()
+                              : "Não informado"}
+                          </p>
+
+                          <p><strong>Como soube:</strong> {d.comoSoube || "Não informado"}</p>
+
+                          {/* TIPO DO GOLPE */}
+                          <p><strong>Tipo de golpe:</strong> {d.tipoGolpe ? golpes[d.tipoGolpe.id_tipo] : d.tipoGolpeOutro || "Não informado"}</p>
+
+                          {/* BANCO */}
+                          <p><strong>Banco:</strong> {d.banco ? bancos[d.banco.id_banco] : d.nomeBancoOutro || "Não informado"}</p>
+
+                          <p><strong>Data da denúncia:</strong>
+                            {new Date(d.data_denuncia).toLocaleDateString()}
+                          </p>
+
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
         </main>
       </div>
     </div>
