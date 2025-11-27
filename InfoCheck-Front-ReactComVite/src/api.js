@@ -1,7 +1,7 @@
 // src/api.js
-// Allow overriding the backend URL via env; fallback to local Spring Boot default.
+// Allow overriding the backend URL via env; fallback to deployed Render URL.
 const envBaseUrl = typeof import.meta !== "undefined" ? import.meta.env?.VITE_API_BASE_URL : null;
-export const API_BASE_URL = (envBaseUrl || "http://localhost:53842").replace(/\/$/, "");
+export const API_BASE_URL = (envBaseUrl || "https://a3leo.onrender.com").replace(/\/$/, "");
 
 export async function apiGet(path) {
   const resp = await fetch(`${API_BASE_URL}${path}`, {

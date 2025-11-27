@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bancos")
-@CrossOrigin(origins = "http://localhost:5173") // React + Vite
+@CrossOrigin(origins = "*") // liberado para qualquer origem
 public class BancoController {
 
     @Autowired
