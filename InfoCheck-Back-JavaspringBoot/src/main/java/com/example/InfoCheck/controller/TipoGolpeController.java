@@ -8,7 +8,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tipos-golpe")
-@CrossOrigin
 public class TipoGolpeController {
 
     @Autowired

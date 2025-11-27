@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/denuncias")
-@CrossOrigin
 public class DenunciaController {
 
     private final DenunciaService service;

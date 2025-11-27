@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/noticias")
-@CrossOrigin(origins = "*", allowCredentials = "true")
 @Slf4j
 public class NoticiaGolpeController {
 
