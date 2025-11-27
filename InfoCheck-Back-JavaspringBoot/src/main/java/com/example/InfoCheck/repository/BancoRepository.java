@@ -13,6 +13,8 @@ public interface BancoRepository extends JpaRepository<Banco, Integer> {
     // Buscar banco por nome exato (case-insensitive) usando JPQL para evitar conflito de nomenclatura
     @Query("SELECT b FROM Banco b WHERE LOWER(b.nome_banco) = LOWER(:nomeBanco)")
     Optional<Banco> findByNomeBancoIgnoreCase(@Param("nomeBanco") String nomeBanco);
+
+    Optional<Banco> findByCnpj(String cnpj);
     
     // Buscar bancos que contenham o termo no nome (para autocomplete)
     @Query("SELECT b FROM Banco b WHERE LOWER(b.nome_banco) LIKE LOWER(CONCAT('%', :termo, '%'))")

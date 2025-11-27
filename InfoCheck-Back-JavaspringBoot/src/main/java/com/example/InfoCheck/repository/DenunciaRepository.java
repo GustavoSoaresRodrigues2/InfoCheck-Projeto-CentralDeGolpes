@@ -48,4 +48,12 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Integer> {
         @Query("SELECT d FROM Denuncia d WHERE d.usuario.id_usuario = :idUsuario ORDER BY d.data_denuncia DESC")
         List<Denuncia> findByUsuarioOrderByDataDenunciaDesc(@Param("idUsuario") Integer idUsuario);
 
+        // Contar denúncias por contato denunciado (normalizado removendo espaços, pontos, parênteses e traços)
+        @Query("""
+                SELECT COUNT(d) FROM Denuncia d
+                WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(d.contatoDenunciado, ' ', ''), '-', ''), '.', ''), '(', ''), ')', ''))
+                      = LOWER(:contatoNormalizado)
+                """)
+        long countByContatoNormalizado(@Param("contatoNormalizado") String contatoNormalizado);
+
 }

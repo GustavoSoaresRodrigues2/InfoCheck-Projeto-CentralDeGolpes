@@ -5,7 +5,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "bancos")
+@Table(
+    name = "bancos",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"nome_banco"}),
+        @UniqueConstraint(columnNames = {"cnpj"})
+    }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,10 +23,10 @@ public class Banco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_banco;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String nome_banco;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String cnpj;
 
     @Column(length = 200)

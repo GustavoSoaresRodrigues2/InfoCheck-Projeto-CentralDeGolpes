@@ -318,12 +318,12 @@ function GolpesPorBanco() {
         </main>
 
         <aside className="cadastroBanco-sidebar">
-          <h3>Cadastre a sua empresa!</h3>
+          <h3>Cadastre uma instituição financeira</h3>
           <p>
-            Cadastre sua empresa no nosso sistema para mostrar ao público que você é confiável. Aqui, verificamos informações e recebemos denúncias de possíveis golpes, reforçando sua credibilidade e protegendo sua reputação.
+            Registre a instituição financeira para aparecer nos canais oficiais e no monitoramento de golpes. Isso reforça a confiabilidade e permite que usuarios consultem e denunciem contatos suspeitos ligados a ela.
           </p>
           <button className="btn-entrar empresa" onClick={() => navigate("/cadastroempresa")}>
-            Cadastrar
+            Cadastrar instituição
           </button>
         </aside>
       </div>

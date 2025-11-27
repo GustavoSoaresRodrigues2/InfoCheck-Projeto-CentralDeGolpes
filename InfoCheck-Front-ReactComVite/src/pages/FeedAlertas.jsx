@@ -2,10 +2,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../api";
 import "../styles/FeedAlertas.css";
 
 // Configuração da URL base da API
-const API_BASE_URL = "http://localhost:53842/api";
+const API_URL = `${API_BASE_URL}/api`;
 
 function FeedAlertas() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function FeedAlertas() {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`${API_BASE_URL}/noticias`);
+      const response = await axios.get(`${API_URL}/noticias`);
       
       if (response.data && response.data.length > 0) {
         setAlertas(response.data);
@@ -60,7 +61,7 @@ function FeedAlertas() {
   const forcarAtualizacao = async () => {
     try {
       setAtualizando(true);
-      await axios.post(`${API_BASE_URL}/noticias/atualizar`);
+      await axios.post(`${API_URL}/noticias/atualizar`);
       
       // Aguarda 2 segundos para dar tempo do backend buscar notícias
       setTimeout(async () => {

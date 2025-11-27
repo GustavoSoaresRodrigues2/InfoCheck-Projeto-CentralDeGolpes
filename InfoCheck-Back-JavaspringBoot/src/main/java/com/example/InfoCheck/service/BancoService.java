@@ -36,10 +36,25 @@ public class BancoService {
     }
 
     public Banco criar(BancoDTO dto) {
+        String nome = dto.getNome_banco() == null ? "" : dto.getNome_banco().trim();
+        String cnpj = dto.getCnpj() == null ? "" : dto.getCnpj().replaceAll("\\D", "");
+
+        if (nome.isEmpty() || cnpj.isEmpty()) {
+            throw new IllegalArgumentException("Nome e CNPJ são obrigatórios");
+        }
+
+        repo.findByNomeBancoIgnoreCase(nome).ifPresent(b -> {
+            throw new IllegalArgumentException("Instituicao financeira já cadastrada com esse nome");
+        });
+
+        repo.findByCnpj(cnpj).ifPresent(b -> {
+            throw new IllegalArgumentException("Instituicao financeira já cadastrada com esse CNPJ");
+        });
+
         Banco banco = new Banco();
-        banco.setCnpj(dto.getCnpj());
+        banco.setCnpj(cnpj);
         banco.setDescricao(dto.getDescricao());
-        banco.setNome_banco(dto.getNome_banco());
+        banco.setNome_banco(nome);
         banco.setSite_oficial(dto.getSite_oficial());
         return repo.save(banco);
     }

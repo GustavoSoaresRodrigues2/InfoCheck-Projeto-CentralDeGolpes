@@ -1,11 +1,27 @@
 -- Seeds para a tabela bancos
 INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
-('Bradesco','60746948000112','https://banco.bradesco/html/classic/index.shtm','Banco Bradesco', CURRENT_TIMESTAMP),
-('Itau','60701190000104','https://www.itau.com.br','Banco Itau', CURRENT_TIMESTAMP),
-('Santander','90400888000142','https://www.santander.com.br','Banco Santander', CURRENT_TIMESTAMP),
-('Nubank','18727053000158','https://nubank.com.br','Nubank', CURRENT_TIMESTAMP),
-('Banco do Brasil','00000000000001','https://www.bb.com.br','Banco do Brasil', CURRENT_TIMESTAMP),
-('Caixa Economica Federal','00000000000002','https://www.caixa.gov.br','Caixa Economica Federal', CURRENT_TIMESTAMP);
+('Bradesco','60746948000112','https://banco.bradesco/html/classic/index.shtm','Banco Bradesco', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
+
+INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
+('Itau','60701190000104','https://www.itau.com.br','Banco Itau', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
+
+INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
+('Santander','90400888000142','https://www.santander.com.br','Banco Santander', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
+
+INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
+('Nubank','18727053000158','https://nubank.com.br','Nubank', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
+
+INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
+('Banco do Brasil','00000000000001','https://www.bb.com.br','Banco do Brasil', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
+
+INSERT INTO bancos (nome_banco, cnpj, site_oficial, descricao, data_cadastro) VALUES
+('Caixa Economica Federal','00000000000002','https://www.caixa.gov.br','Caixa Economica Federal', CURRENT_TIMESTAMP)
+ON CONFLICT (nome_banco) DO NOTHING;
 
 -- Usuario demo para evitar erro de id inexistente nas denuncias
 INSERT INTO usuarios (nome, cpf, data_nascimento, senha, cep)

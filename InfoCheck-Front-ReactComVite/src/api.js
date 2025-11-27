@@ -1,5 +1,7 @@
 // src/api.js
-export const API_BASE_URL = "http://localhost:53842";
+// Allow overriding the backend URL via env; fallback to local Spring Boot default.
+const envBaseUrl = typeof import.meta !== "undefined" ? import.meta.env?.VITE_API_BASE_URL : null;
+export const API_BASE_URL = (envBaseUrl || "http://localhost:53842").replace(/\/$/, "");
 
 export async function apiGet(path) {
   const resp = await fetch(`${API_BASE_URL}${path}`, {

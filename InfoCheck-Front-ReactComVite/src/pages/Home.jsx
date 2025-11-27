@@ -177,18 +177,27 @@ function Home() {
             Isso totaliza cerca de 112.272 tentativas por dia.
           </p>
           <p className="hero-subtitle">
-            Se você foi vítima de um golpe, faça sua denúncia.
+            Verifique se um contato é confiável antes de interagir.
           </p>
-          {usuarioLogado && (
-            <button className="btn-denuncia" onClick={() => navigate("/denuncia-elaborada")}>
-              Denuncie agora
+          <div className="hero-buttons">
+            <button className="btn-verificar-principal" onClick={() => navigate("/verificar-contato")}>
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Verificar Contato
             </button>
-          )}
-          {!usuarioLogado && (
-            <button className="btn-denuncia" onClick={() => navigate("/login")}>
-              Denuncie agora
-            </button>
-          )}
+            {usuarioLogado && (
+              <button className="btn-denunciar-secundario" onClick={() => navigate("/denuncia-elaborada")}>
+                Denunciar
+              </button>
+            )}
+            {!usuarioLogado && (
+              <button className="btn-denunciar-secundario" onClick={() => navigate("/login")}>
+                Denunciar
+              </button>
+            )}
+          </div>
         </div>
       </section>
 

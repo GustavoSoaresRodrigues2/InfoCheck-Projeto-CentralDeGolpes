@@ -4,6 +4,7 @@ import FeedAlertas from "./pages/FeedAlertas";
 import GolpesPorBanco from "./pages/GolpesPorBanco";
 import Estatisticas from "./pages/Estatisticas";
 import DenunciaElaborada from "./pages/DenunciaElaborada";
+import VerificarContato from "./pages/VerificarContato";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Dashboard from "./pages/Dashboard";
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/feed-alertas" element={<FeedAlertas />} />
+        <Route path="/verificar-contato" element={<VerificarContato />} />
         <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
         <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
         <Route path="/estatisticas" element={<Estatisticas />} />

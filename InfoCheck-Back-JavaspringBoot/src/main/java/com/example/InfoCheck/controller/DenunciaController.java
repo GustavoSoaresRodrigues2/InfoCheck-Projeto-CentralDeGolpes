@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.InfoCheck.entities.Denuncia;
 import com.example.InfoCheck.dtos.DenunciaDTO;
+import com.example.InfoCheck.dtos.VerificacaoContatoDTO;
 import com.example.InfoCheck.service.DenunciaService;
 
 import java.time.LocalDate;
@@ -80,6 +81,21 @@ public class DenunciaController {
     public ResponseEntity<List<Denuncia>> listarDenunciasPorUsuario(@PathVariable Integer idUsuario) {
         List<Denuncia> denuncias = service.listarDenunciasPorUsuario(idUsuario);
         return ResponseEntity.ok(denuncias);
+    }
+
+    // Verificar contato - retorna contagem de denúncias e nível de confiabilidade
+    @GetMapping("/contato/{contato}")
+    public ResponseEntity<?> verificarContato(@PathVariable String contato) {
+        try {
+            if (contato == null || contato.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Contato não pode ser vazio");
+            }
+
+            VerificacaoContatoDTO resultado = service.verificarContato(contato);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao verificar contato: " + e.getMessage());
+        }
     }
 
 }

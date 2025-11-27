@@ -1,6 +1,7 @@
 package com.example.InfoCheck.service;
 
 import com.example.InfoCheck.dtos.DenunciaDTO;
+import com.example.InfoCheck.dtos.VerificacaoContatoDTO;
 import com.example.InfoCheck.entities.Banco;
 import com.example.InfoCheck.entities.Denuncia;
 import com.example.InfoCheck.entities.TipoGolpe;
@@ -129,6 +130,44 @@ public class DenunciaService {
 
     public List<Denuncia> listarDenunciasPorUsuario(Integer idUsuario) {
         return denunciaRepo.findByUsuarioOrderByDataDenunciaDesc(idUsuario);
+    }
+
+    // ==========================================
+    // 🔹 VERIFICAR CONTATO
+    // ==========================================
+    public VerificacaoContatoDTO verificarContato(String contato) {
+        // Normalizar contato: remover espaços e caracteres especiais
+        String contatoNormalizado = normalizarContato(contato);
+        
+        // Contar denúncias
+        long totalDenuncias = denunciaRepo.countByContatoNormalizado(contatoNormalizado);
+        
+        // Determinar nível de confiabilidade
+        String confiabilidade = determinarConfiabilidade(totalDenuncias);
+        
+        return new VerificacaoContatoDTO(contatoNormalizado, totalDenuncias, confiabilidade);
+    }
+
+    private String normalizarContato(String contato) {
+        if (contato == null) {
+            return "";
+        }
+        // Remove espaços, traços, parênteses e normaliza
+        return contato.trim()
+                     .replaceAll("[\\s\\-\\(\\)\\.]", "")
+                     .toLowerCase();
+    }
+
+    private String determinarConfiabilidade(long totalDenuncias) {
+        if (totalDenuncias == 0) {
+            return "Sem denúncias";
+        } else if (totalDenuncias <= 2) {
+            return "Atenção";
+        } else if (totalDenuncias <= 5) {
+            return "Risco";
+        } else {
+            return "Alto risco";
+        }
     }
 
 }

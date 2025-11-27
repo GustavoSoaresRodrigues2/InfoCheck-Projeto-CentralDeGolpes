@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { apiPost } from "../api";
+import ErrorModal from "../components/ErrorModal";
 
 const CadastroEmpresa = () => {
   const navigate = useNavigate();
@@ -9,7 +10,10 @@ const CadastroEmpresa = () => {
   const [nomeBanco, setNomeBanco] = useState("");
   const [descricao, setDescricao] = useState("");
   const [site, setSite] = useState("");
-
+  const [modalAberto, setModalAberto] = useState(false);
+  const [modalTitulo, setModalTitulo] = useState("Erro");
+  const [modalMensagem, setModalMensagem] = useState("");
+  const [sucesso, setSucesso] = useState(false);
 
   function handleCNPJ(e) {
     let v = e.target.value.replace(/\D/g, "");
@@ -24,22 +28,26 @@ const CadastroEmpresa = () => {
     e.preventDefault();
 
     const data = {
-      cnpj,
-      nome_banco: nomeBanco,
-      descricao,
-      site_oficial: site,
+      cnpj: cnpj.trim(),
+      nome_banco: nomeBanco.trim(),
+      descricao: descricao.trim(),
+      site_oficial: site.trim(),
     };
 
     try {
-      const response = await apiPost("/api/bancos", data);
-      alert("Empresa cadastrada com sucesso!");
-      navigate("/home");
+      await apiPost("/api/bancos", data);
+      setSucesso(true);
+      setModalTitulo("Sucesso");
+      setModalMensagem("Instituicao financeira cadastrada com sucesso!");
+      setModalAberto(true);
     } catch (error) {
       console.error(error);
-      alert("Erro ao cadastrar empresa");
+      setSucesso(false);
+      setModalTitulo("Erro ao cadastrar");
+      setModalMensagem(error?.message || "Erro ao cadastrar instituicao financeira");
+      setModalAberto(true);
     }
   }
-
 
   return (
     <div className="auth-container">
@@ -63,7 +71,7 @@ const CadastroEmpresa = () => {
                 <path d="M20 6L9 17L4 12" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <p className="auth-subtitle">Sua segurança em primeiro lugar</p>
+            <p className="auth-subtitle">Cadastre uma instituicao financeira confiavel</p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
@@ -80,7 +88,7 @@ const CadastroEmpresa = () => {
                 type="text"
                 value={cnpj}
                 onChange={handleCNPJ}
-                placeholder="00.000.000/0000.00"
+                placeholder="00.000.000/0000-00"
                 maxLength="18"
                 required
               />
@@ -92,14 +100,14 @@ const CadastroEmpresa = () => {
                   <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Nome da Empresa
+                Nome da instituicao financeira
               </label>
               <input
                 className="form-input"
                 type="text"
                 value={nomeBanco}
                 onChange={(e) => setNomeBanco(e.target.value)}
-                placeholder="Nome da empresa..."
+                placeholder="Nome da instituicao..."
                 maxLength="100"
                 required
               />
@@ -111,14 +119,14 @@ const CadastroEmpresa = () => {
                   <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Descrição
+                Descricao
               </label>
               <input
                 className="form-input"
                 type="text"
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
-                placeholder="Descreva a sua empresa..."
+                placeholder="Descreva a instituicao..."
                 maxLength="200"
                 required
               />
@@ -139,21 +147,21 @@ const CadastroEmpresa = () => {
                   <path d="M14 11a5 5 0 0 0-7 0l-1 1a5 5 0 0 0 7 7l1-1" />
                 </svg>
 
-                Site Oficinal
+                Site oficial
               </label>
               <input
                 className="form-input"
                 type="text"
                 value={site}
                 onChange={(e) => setSite(e.target.value)}
-                placeholder="Site oficial da sua empresa..."
+                placeholder="Site oficial da instituicao..."
                 maxLength="100"
                 required
               />
             </div>
 
             <button type="submit" className="btnSalvar">
-              Cadastrar
+              Cadastrar instituicao financeira
             </button>
           </form>
         </div>
@@ -172,8 +180,20 @@ const CadastroEmpresa = () => {
           </div>
         </div>
       </div>
+      <ErrorModal
+        isOpen={modalAberto}
+        onClose={() => {
+          setModalAberto(false);
+          if (sucesso) {
+            navigate("/golpes-por-banco");
+          }
+        }}
+        disableOverlayClose={sucesso}
+        message={modalMensagem}
+        title={modalTitulo}
+      />
     </div>
-  )
+  );
 }
 
-export default CadastroEmpresa
+export default CadastroEmpresa;

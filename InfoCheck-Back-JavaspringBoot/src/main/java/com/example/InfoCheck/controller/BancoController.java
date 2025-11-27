@@ -11,6 +11,7 @@ import com.example.InfoCheck.service.BancoService;
 import com.example.InfoCheck.service.ContatoOficialService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bancos")
@@ -31,8 +32,15 @@ public class BancoController {
 
     // Criar banco via DTO
     @PostMapping
-    public Banco cadastrar(@RequestBody BancoDTO dto) {
-        return bancoService.criar(dto);
+    public ResponseEntity<?> cadastrar(@RequestBody BancoDTO dto) {
+        try {
+            Banco salvo = bancoService.criar(dto);
+            return ResponseEntity.ok(salvo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Erro ao cadastrar instituicao financeira"));
+        }
     }
 
     // Buscar banco por ID

@@ -167,6 +167,59 @@
   margin-top: 1.5rem !important;
 }
 
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-verificar-principal {
+  background: white;
+  color: #1e3a8a;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-verificar-principal svg {
+  width: 22px;
+  height: 22px;
+}
+
+.btn-verificar-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-denunciar-secundario {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 0.9rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-denunciar-secundario:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
 .btn-denuncia {
   background: white;
   color: #1e3a8a;
@@ -342,6 +395,21 @@
   .btn-denuncia {
     padding: 0.9rem 2rem;
     font-size: 1rem;
+  }
+
+  .btn-verificar-principal {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+  }
+
+  .btn-denunciar-secundario {
+    padding: 0.8rem 1.8rem;
+    font-size: 0.95rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
   }
 
   .cards-section {
